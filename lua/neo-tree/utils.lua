@@ -116,6 +116,8 @@ M.debounce = function(id, fn, frequency_in_ms, strategy, action)
     success, result = pcall(fn)
   end
   fn_data.fn = nil
+  -- setting fn to nil to free the reference to the function, so that it can be garbage collected
+  ---@diagnostic disable-next-line
   fn = nil
 
   if not success then
@@ -246,9 +248,9 @@ end
 ---@param sourceObject table The table to get a vlue from.
 ---@param valuePath string The path to the value to get.
 ---@param defaultValue any The default value to return if the value is nil.
----@param strict_type_check boolean Whether to require the type of the value is
+---@param strict_type_check boolean|nil Whether to require the type of the value is
 ---the same as the default value.
----@return table|nil table The value at the path or the default value.
+---@return any The value at the path or the default value.
 M.get_value = function(sourceObject, valuePath, defaultValue, strict_type_check)
   if sourceObject == nil then
     return defaultValue
@@ -321,7 +323,7 @@ end
 ---Evaluates the value of <afile>, which comes from an autocmd event, and determines if it
 ---is a valid file or some sort of utility buffer like quickfix or neo-tree itself.
 ---@param afile string The path or relative path to the file.
----@param true_for_terminals boolean Whether to return true for terminals, normally it would be false.
+---@param true_for_terminals boolean|nil Whether to return true for terminals, normally it would be false.
 ---@return boolean boolean Whether the buffer is a real file.
 M.is_real_file = function(afile, true_for_terminals)
   if type(afile) ~= "string" or afile == "" or afile == "quickfix" then
@@ -378,7 +380,7 @@ end
 ---Open file in the appropriate window.
 ---@param state table The state of the source
 ---@param path string The file to open
----@param open_cmd string The vimcommand to use to open the file
+---@param open_cmd string|nil The vimcommand to use to open the file, defaults to "edit"
 M.open_file = function(state, path, open_cmd)
   open_cmd = open_cmd or "edit"
   if open_cmd == "edit" then
@@ -741,6 +743,7 @@ function M.is_hidden(path)
   if not M.is_windows then
     return false
   end
+  ---@diagnostic disable-next-line
   return bit.band(ffi.C.GetFileAttributesA(path), FILE_ATTRIBUTE_HIDDEN) ~= 0
 end
 

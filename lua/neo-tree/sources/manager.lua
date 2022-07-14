@@ -406,10 +406,10 @@ end
 
 ---Navigate to the given path.
 ---@param state_or_source_name string|table The state or source name to navigate.
----@param path string Path to navigate to. If empty, will navigate to the cwd.
----@param path_to_reveal string Node to focus after the items are loaded.
----@param callback function Callback to call after the items are loaded.
----@param async boolean Whether to load the items asynchronously, may not be respected by all sources.
+---@param path string|nil Path to navigate to. If empty, will navigate to the cwd.
+---@param path_to_reveal string|nil  Node to focus after the items are loaded.
+---@param callback function|nil Callback to call after the items are loaded.
+---@param async boolean|nil Whether to load the items asynchronously, may not be respected by all sources.
 M.navigate = function(state_or_source_name, path, path_to_reveal, callback, async)
   require("neo-tree").ensure_config()
   local state, source_name
